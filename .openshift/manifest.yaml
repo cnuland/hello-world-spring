@@ -21,8 +21,8 @@ items:
   kind: DeploymentConfig
   metadata:
     labels:
-      app: ssl-server
-    name: ssl-server
+      app: hello-world
+    name: hello-world
   spec:
     replicas: 1
     selector:
@@ -48,6 +48,9 @@ items:
           volumeMounts:
           - mountPath: /var/run/secrets/java.io/keystores
             name: keystore-volume
+          - mountPath: /opt/webserver/conf/server.xml
+            name: config-volume
+            subPath: server.xml
         initContainers:
         - name: pem-to-keystore
           image: registry.access.redhat.com/redhat-sso-7/sso71-openshift:1.1-16
@@ -75,6 +78,9 @@ items:
         - name: service-certs
           secret:
             secretName: service-certs
+        - name: config-volume
+          configMap:
+            name: config
     triggers:
     - type: ConfigChange
     - imageChangeParams:
